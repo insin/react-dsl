@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>Bootstrap | ReactDSL</title>
+  <script src="http://fb.me/react-with-addons-0.12.1.js"></script>
+  <script src="http://fb.me/JSXTransformer-0.12.1.js"></script>
+  <script src="react-dsl.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+  <style>
+  .row [class^="col-"] {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: rgba(86, 61, 124, 0.15);
+    border: 1px solid rgba(86, 61, 124, 0.2);
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+  <h1>Bootstrap</h1>
+  </div>
+
+  <div id="app"></div>
+
+  <div class="container">
+  <h2>JSX source:</h2>
+  <pre><code>&lt;Container&gt;
+  &lt;h2&gt;Rendered output:&lt;/h2&gt;
+  &lt;Row&gt;
+    &lt;Col xs="12" md="8"&gt;&lt;code&gt;xs="12" md="8"&lt;/code&gt;&lt;/Col&gt;
+    &lt;Col xs="6" md="4"&gt;&lt;code&gt;xs="6" md="4"&lt;/code&gt;&lt;/Col&gt;
+  &lt;/Row&gt;
+  &lt;Row&gt;
+    &lt;Col md="4"&gt;&lt;code&gt;md="4"&lt;/code&gt;&lt;/Col&gt;
+    &lt;Col md="4" mdOffset="4"&gt;&lt;code&gt;md="4" mdOffset="4"&lt;/code&gt;&lt;/Col&gt;
+  &lt;/Row&gt;
+  &lt;Row&gt;
+    &lt;Col sm="9"&gt;
+      Level 1: &lt;code&gt;sm="9"&lt;/code&gt;
+      &lt;Row&gt;
+        &lt;Col xs="8" sm="6"&gt;Level 2: &lt;code&gt;xs="8" sm="6"&lt;/code&gt;&lt;/Col&gt;
+        &lt;Col xs="4" sm="6"&gt;Level 2: &lt;code&gt;xs="4" sm="6"&lt;/code&gt;&lt;/Col&gt;
+      &lt;/Row&gt;
+    &lt;/Col&gt;
+  &lt;/Row&gt;
+&lt;/Container&gt;</code></pre>
+  </div>
+
+  <div class="container">
+  <h2>Components generated with:</h2>
+  <pre><code>var colSizeRE = /^(?:[1-9]|1[0-2])$/
+
+var bootstrap = {
+  components: {
+    'Container(fluid)': 'div.{container(fluid)}'
+  , 'Row': 'div.row'
+  , 'Col(xs, sm, md, lg, xsOffset, smOffset, mdOffset, lgOffset)':
+      `div.col-xs-{xs}.col-sm-{sm}.col-md-{md}.col-lg-{lg}
+          .col-xs-offset-{xsOffset}.col-sm-offset-{smOffset}
+          .col-md-offset-{mdOffset}.col-lg-offset-{lgOffset}`
+  },
+
+  functions: {
+    container(fluid) {
+      return fluid ? 'container-fluid' : 'container'
+    }
+  }
+}
+
+var {Container, Row, Col} = ReactDSL(bootstrap)</code></pre>
+  </div>
+
+<script type="text/jsx;harmony=true">void function() {
+'use strict';
+
+var colSizeRE = /^(?:[1-9]|1[0-2])$/
+
+var bootstrap = {
+  components: {
+    'Container(fluid)': 'div.{container(fluid)}'
+  , 'Row': 'div.row'
+  , 'Col(xs, sm, md, lg, xsOffset, smOffset, mdOffset, lgOffset)':
+      `div.col-xs-{xs}.col-sm-{sm}.col-md-{md}.col-lg-{lg}
+          .col-xs-offset-{xsOffset}.col-sm-offset-{smOffset}
+          .col-md-offset-{mdOffset}.col-lg-offset-{lgOffset}`
+  },
+
+  functions: {
+    container(fluid) {
+      return fluid ? 'container-fluid' : 'container'
+    }
+  }
+}
+
+var {Container, Row, Col} = ReactDSL(bootstrap)
+
+React.render(<Container>
+  <h2>Rendered output:</h2>
+  <Row>
+    <Col xs="12" md="8"><code>xs="12" md="8"</code></Col>
+    <Col xs="6" md="4"><code>xs="6" md="4"</code></Col>
+  </Row>
+  <Row>
+    <Col md="4"><code>md="4"</code></Col>
+    <Col md="4" mdOffset="4"><code>md="4" mdOffset="4"</code></Col>
+  </Row>
+  <Row>
+    <Col sm="9">
+      Level 1: <code>sm="9"</code>
+      <Row>
+        <Col xs="8" sm="6">Level 2: <code>xs="8" sm="6"</code></Col>
+        <Col xs="4" sm="6">Level 2: <code>xs="4" sm="6"</code></Col>
+      </Row>
+    </Col>
+  </Row>
+</Container>, document.getElementById('app'))
+
+}()</script>
+</body>
