@@ -106,29 +106,40 @@ function renderTag(tagDefn, props, functions, includeChildren) {
   return React.createElement(tagDefn.tagName, attrs, child)
 }
 
+/**
+ * Builds a classname from a list of definitions.
+ * If a variable is undefined or a function call returns undefined, the entire
+ * class name definition containing it will be skipped.
+ * @param {Array.<Array.<Object|string>>} classNameDefns a list of class name
+ *   definitions - each definition is a list of literal string parts, variable
+ *   definitions or function call definitions.
+ */
 function getClassName(classNameDefns, props, functions) {
   var classNames = []
   classNameDefns.forEach(classNameDefn => {
     var classNameParts = []
-    classNameDefn.forEach(part => {
+    for (var i = 0, l = classNameDefn.length; i < l ; i++) {
+      var part = classNameDefn[i]
       if (getType(part) == 'string') {
         classNameParts.push(part)
       }
       else if (part.variable) {
-        if (typeof props[part.variable] != 'undefined') {
-          classNameParts.push(props[part.variable])
+        // Bail out if the variable was not provided
+        if (typeof props[part.variable] == 'undefined') {
+          return
         }
+        classNameParts.push(props[part.variable])
       }
       else if (part.functionCall) {
         var funcResult = performFunctionCall(part.functionCall, props, functions)
-        if (typeof funcResult != 'undefined') {
-          classNameParts.push(funcResult)
+        // Bail out if the function call didn't return anything
+        if (typeof funcResult == 'undefined') {
+          return
         }
+        classNameParts.push(funcResult)
       }
-    })
-    if (classNameParts.length > 0) {
-      classNames.push(classNameParts.join(''))
     }
+    classNames.push(classNameParts.join(''))
   })
   return classNames.join(' ')
 }
@@ -137,12 +148,7 @@ function performFunctionCall(funcCallDefn, props, functions) {
   if (typeof functions[funcCallDefn.name] != 'function') {
     throw new Error('Unknown function name: ' + funcCallDefn.name)
   }
-  // Special case for single arg functon
-  if (funcCallDefn.args.length == 1) {
-    if (typeof props[funcCallDefn.args[0]] == 'undefined') { return }
-    return functions[funcCallDefn.name](props[funcCallDefn.args[0]])
-  }
-  // Let multiple arg functions handle optional props themselves
+  // Let functions handle optional props themselves
   return functions[funcCallDefn.name].apply(null, funcCallDefn.args.map(function(arg) {
     return props[arg]
   }))
