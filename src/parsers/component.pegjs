@@ -3,24 +3,27 @@ start
 
 component
 = name:componentName
-  props:("(" props:componentProps ")" { return props })?
+  props:("(" ws* props:componentProps ws* ")" { return props })?
   { return {name: name, props: props} }
 
 componentProps "component props"
 = prop:componentProp
-  props:(" "* "," " "* prop:componentProp { return prop })*
+  props:(ws* "," ws* prop:componentProp { return prop })*
   { return [prop].concat(props) }
 
 componentProp "component prop"
 = name:propName
-  type:(" "* ":" " "* type:propType { return type })?
+  type:(ws* ":" ws* type:propType { return type })?
   { return {name: name, type: type} }
 
 componentName "component name"
-= initial:[A-Z] rest:[a-z0-9_]i* { return initial + rest.join('') }
+= first:[A-Z_$] rest:[a-z0-9_$]i* { return first + rest.join('') }
 
 propName "prop name"
-= initial:[a-z] rest:[a-z0-9_]i* { return initial + rest.join('') }
+= first:[a-z_$]i rest:[a-z0-9_$]i* { return first + rest.join('') }
 
 propType "prop type"
-= name:[a-z]i+ { return name.join('') }
+= first:[a-z_$]i rest:[a-z0-9_$]i* { return first + rest.join('') }
+
+ws "whitespace"
+= [ \t\r\n]

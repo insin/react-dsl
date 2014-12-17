@@ -3,31 +3,39 @@ start
 
 tag
 = name:tagName
-  classes:("." className:className { return className} )*
-  child:("/" child:tag { return child })?
+  classes:(ws* "." className:className { return className} )*
+  child:(ws* "/" ws* child:tag { return child })?
   { return {tagName: name, classes: classes, child: child} }
 
 className
-= (name:[-a-z0-9_]i+ { return name.join('') } / variable)+
+= (name:[-a-z0-9_]i+ { return name.join('') } / expr)+
 
-variable
-= "{" variable:(f:functionCall { return {functionCall: f} } / p:propName { return {variable: p} }) "}"
-  { return variable }
+expr "expression"
+= "{" ws*
+  expr:(
+    f:functionCall { return {functionCall: f} }
+  / p:propName { return {variable: p} }
+  )
+  ws* "}"
+  { return expr }
 
 functionCall "function call"
-= name:functionName "(" args:args ")"
+= name:functionName "(" ws* args:args ws* ")"
   { return {name: name, args: args} }
 
 args "arguments"
 = arg:propName
-  args:(" "* "," " "* arg:propName { return arg })*
+  args:(ws* "," ws* arg:propName { return arg })*
   { return [arg].concat(args) }
 
 tagName "tag name"
 = name:[a-z]+ { return name.join('') }
 
 propName "prop name"
-= initial:[a-z_] rest:[a-z0-9_]i* { return initial + rest.join('') }
+= first:[a-z_$]i rest:[a-z0-9_$]i* { return first + rest.join('') }
 
 functionName "function name"
-= name:[a-z_]i+ { return name.join('') }
+= first:[a-z_$]i rest:[a-z0-9_$]i* { return first + rest.join('') }
+
+ws "whitespace"
+= [ \t\r\n]
