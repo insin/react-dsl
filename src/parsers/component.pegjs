@@ -8,7 +8,7 @@ component
 
 componentProps "component props"
 = prop:componentProp
-  props:(ws* "," ws* prop:componentProp { return prop })*
+  props:(ws* "," ws* nextProp:componentProp { return nextProp })*
   { return [prop].concat(props) }
 
 componentProp "component prop"
